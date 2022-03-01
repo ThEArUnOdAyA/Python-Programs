@@ -7,20 +7,45 @@
     <title>Account</title>
 </head>
 <body>
-    <h1>{{ object.username }}</h1>
-    <h2>{{ object.email }}</h2>
-    <button><a href="{% url 'logout' %}">Log Out</a></button>
-    <button><a href="{% url 'books' %}">Home</a></button>
-    <hr>
-    {% if bookData == None %}
-    <h2>No books Issued!</h2>
-    {% else %}
-    <h2>Your Issued Books:</h2><br>
-    <ul>
-            {% for items in bookData %}
+    <nav>
+        <div>
+            <h3>Your Account</h3>
+        </div>
+        <div>
+            <button><a href="{% url 'logout' %}">Log Out</a></button>
+            <button><a href="{% url 'books' %}">Home</a></button>
+        </div>
+    </nav>
+    <div>
+        <div>
+            <h3>
+                Your Name:
+            </h3>
+        </div>
+        <div>
+            <h1>{{ object.username|title }}</h1>
+        </div>
+        <div>
+            <h3>Your Email:</h3>
+        </div>
+        <div>
+            <h2>{{ object.email }}</h2>
+        </div>
+        <hr>
+        {% if bookData == None %}
+            <div>
+                <h2>No books Issued!</h2>
+            </div>
+        {% else %}
+            <div>
+                <h2>Your Issued Books:</h2>
+            </div>
+            <ul>
+                {% for items in bookData %}
                 <li><a href="{{ items.get_absolute_url }}">{{ items }}</a></li>
-            {% endfor %}
-    </ul>
-    {% endif %}
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
 </body>
 </html>

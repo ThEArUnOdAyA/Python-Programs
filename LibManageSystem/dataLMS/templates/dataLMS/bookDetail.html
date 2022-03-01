@@ -24,20 +24,23 @@
         </div>
     </nav>
     <div>
-
-        <h3>Author:</h3>
-        <h2>{{ object.author }}</h2>
+        <div>
+            <h3>Author:</h3>
+        </div>
+        <div>
+            <h2>{{ object.author }}</h2>
+        </div>
         <div>
             {% if return %}
-            <form action="{% url 'return' object.slug %}" method="POST">
-                {% csrf_token %}
-                <input type="submit" value="Return This Book">
-            </form>
+                <form action="{% url 'return' object.slug %}" method="POST">
+                    {% csrf_token %}
+                    <input type="submit" value="Return This Book">
+                </form>
             {% else %}
-            <form action="{{ object.get_absolute_url }}" method="POST">
-                {% csrf_token %}
-                <input type="submit" value="Issue This Book">
-            </form>
+                <form action="{{ object.get_absolute_url }}" method="POST">
+                    {% csrf_token %}
+                    <input type="submit" value="Issue This Book">
+                </form>
             {% endif %}
         </div>
     </div>
