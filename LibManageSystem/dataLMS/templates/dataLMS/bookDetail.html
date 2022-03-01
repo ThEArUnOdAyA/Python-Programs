@@ -7,20 +7,40 @@
     <title>{{object.title}}</title>
 </head>
 <body>
-    Book:
-    <h1>{{ object.title }}</h1>
-    <h2>{{ object.author }}</h2>
-    {% if return %}
-    <form action="{% url 'return' object.slug %}" method="POST">
-        {% csrf_token %}
-        <input type="submit" value="Return This Book">
-    </form>
-    {% else %}
-    <form action="{{ object.get_absolute_url }}" method="POST">
-        {% csrf_token %}
-        <input type="submit" value="Issue This Book">
-    </form>
-    {% endif %}
+    <nav>
+        <h3>{{ object.title }}</h3>
+        <div>
+            {% if data %}
+                <div>
+                    <a href="{% url 'account' %}">Account</a> &nbsp; &nbsp;
+                    <a href="{% url 'logout' %}">Sign Out</a>
+                </div>
+            {% else %}
+                <div>
+                    <a href="{% url 'login' %}">Sign In</a> &nbsp; &nbsp;
+                    <a href="{% url 'register' %}">Sign Up</a>
+                </div>
+            {% endif %}
+        </div>
+    </nav>
+    <div>
+
+        <h3>Author:</h3>
+        <h2>{{ object.author }}</h2>
+        <div>
+            {% if return %}
+            <form action="{% url 'return' object.slug %}" method="POST">
+                {% csrf_token %}
+                <input type="submit" value="Return This Book">
+            </form>
+            {% else %}
+            <form action="{{ object.get_absolute_url }}" method="POST">
+                {% csrf_token %}
+                <input type="submit" value="Issue This Book">
+            </form>
+            {% endif %}
+        </div>
+    </div>
     {{ status }}
 </body>
 </html>

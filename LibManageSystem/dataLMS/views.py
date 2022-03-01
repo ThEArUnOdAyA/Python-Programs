@@ -62,28 +62,29 @@ class BookDetailView(View):
 
     def get(self, request, slug):
         data = Books.objects.get(slug=slug)
+        val = False
         if 'email' in list(request.session.keys()):
+            val = True
             if IssuedBooks.objects.filter(issuedBook=Books.objects.get(slug=slug), issuer=User.objects.get(email=request.session['email'])).exists():
-                return render(request, 'dataLMS/bookDetail.html', {'object':data, 'return':True})
-        return render(request, 'dataLMS/bookDetail.html', {'object':data})
+                return render(request, 'dataLMS/bookDetail.html', {'object':data, 'return':True, 'data':val})
+        return render(request, 'dataLMS/bookDetail.html', {'object':data, 'data':val})
     
     
     def post(self, request, slug):
-            data = Books.objects.get(slug=slug)
-        # try:
+        try:
             a = IssuedBooks.objects.create(issuer=User.objects.get(email=request.session['email']), issuedBook=Books.objects.get(slug=slug))
                 
-            return render(request, 'dataLMS/bookDetail.html', {'object':data,'status':'You issued This Book!'})
-        # except Exception as e:
+            return HttpResponseRedirect(reverse('bookDetail', args=[slug]))
+        except Exception as e:
             # return HttpResponse(e)
-            # return HttpResponseRedirect(reverse('login'))
+            return HttpResponseRedirect(reverse('login'))
 
 class ReturnBookView(View):
     def post(self, request, slug):
         book_id = slug
         try:
             IssuedBooks.objects.get(issuedBook=Books.objects.get(slug=book_id), issuer=User.objects.get(email=request.session['email'])).delete()
-            return HttpResponseRedirect(reverse('account'))
+            return HttpResponseRedirect(reverse('bookDetail', args=[book_id]))
         except Exception as e:
             return HttpResponse(e)
             # return HttpResponseRedirect(reverse('login'))
