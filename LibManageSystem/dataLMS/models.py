@@ -27,7 +27,11 @@ class IssuedBooks(models.Model):
     issuedAt = models.DateField(auto_now_add=True)
 
     def __str__(self):
-        return self.issuer.email
+        return self.issuedBook.title
+    
+    def get_absolute_url(self):
+        return reverse("bookDetail", args=[self.issuedBook.slug])
+    
     
     class Meta:
         verbose_name_plural = 'Issued Books'

@@ -1,0 +1,4 @@
+# Ignored files and folders
+db.sqlite3
+db.sqlite3.journal
+__pycache__/

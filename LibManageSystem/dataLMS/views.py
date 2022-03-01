@@ -35,27 +35,18 @@ class RegisterView(View):
 class LoginView(View):
 
     def get(self, request):
-        loginForm = LoginForm(request.POST or None)
+        loginForm = LoginForm()
+        if 'email' in list(request.session.keys()):
+            return HttpResponseRedirect(reverse('account'))
         return render(request, 'dataLMS/login.html', {'form':loginForm})
 
     def post(self, request):
         loginForm = LoginForm(request.POST or None)
         if loginForm.is_valid():
-            a = request.POST['password']
-            if User.objects.filter(email=request.POST['email']).exists():
-                if 'email' in request.session.keys():
-                    if request.POST['email'] == request.session['email']:
-                        return render(request, 'dataLMS/login.html', {'form':loginForm, 'error':'User already logged in!'})
-                else:
-                    if User.objects.get(email=request.POST['email']).password == a:
-                        
-                        request.session['email'] = request.POST['email']
-                        return HttpResponseRedirect(reverse('account'))
+            request.session['email'] = request.POST['email']
+            return HttpResponseRedirect(reverse('account'))
 
-                    else:
-                        return render(request, 'dataLMS/login.html', {'form':loginForm, 'error':'Password invalid'})
-            else:
-                return render(request, 'dataLMS/login.html', {'form':loginForm, 'error':'Email Does not Exist'})
+        return render(request, 'dataLMS/login.html', {'form':loginForm, 'error':loginForm.errors})
 
 
 class BookListView(View):
@@ -71,39 +62,47 @@ class BookDetailView(View):
 
     def get(self, request, slug):
         data = Books.objects.get(slug=slug)
+        if 'email' in list(request.session.keys()):
+            if IssuedBooks.objects.filter(issuedBook=Books.objects.get(slug=slug), issuer=User.objects.get(email=request.session['email'])).exists():
+                return render(request, 'dataLMS/bookDetail.html', {'object':data, 'return':True})
         return render(request, 'dataLMS/bookDetail.html', {'object':data})
     
     
     def post(self, request, slug):
-        data = Books.objects.get(slug=slug)
-        try:
-            
+            data = Books.objects.get(slug=slug)
+        # try:
             a = IssuedBooks.objects.create(issuer=User.objects.get(email=request.session['email']), issuedBook=Books.objects.get(slug=slug))
                 
             return render(request, 'dataLMS/bookDetail.html', {'object':data,'status':'You issued This Book!'})
-        except Exception as e:
+        # except Exception as e:
             # return HttpResponse(e)
-            return HttpResponseRedirect(reverse('login'))
+            # return HttpResponseRedirect(reverse('login'))
 
-
+class ReturnBookView(View):
+    def post(self, request, slug):
+        book_id = slug
+        try:
+            IssuedBooks.objects.get(issuedBook=Books.objects.get(slug=book_id), issuer=User.objects.get(email=request.session['email'])).delete()
+            return HttpResponseRedirect(reverse('account'))
+        except Exception as e:
+            return HttpResponse(e)
+            # return HttpResponseRedirect(reverse('login'))
 
 class AccountView(View):
 
     def get(self, request):
         try:
             object = User.objects.get(email=request.session['email'])
-            try:
-                context= [IssuedBooks.objects.get(issuer=User.objects.get(email=request.session['email'])).issuedBook]
-            except Exception:
-                context = 'No Books Issued'
-                return render(request, 'dataLMS/account.html', {'object':object, 'bookData':context, 'issueStatus':False, 'error':'No books Issued!'})
-            return render(request, 'dataLMS/account.html', {'object':object, 'bookData':context, 'issueStatus':True})
+            context= list(IssuedBooks.objects.filter(issuer=User.objects.get(email=request.session['email'])))
+            if len(context) == 0:
+                context = None
+            return render(request, 'dataLMS/account.html', {'object':object, 'bookData':context})
         except Exception as e:
-            return HttpResponse(e)
-            # return HttpResponseRedirect(reverse('login'))
+            # return HttpResponse(e)
+            return HttpResponseRedirect(reverse('login'))
 
 
 class LogoutView(View):
     def get(self, request):
-        logout(request)
+        del request.session['email']
         return HttpResponseRedirect(reverse('books'))
