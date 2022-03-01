@@ -1,0 +1,33 @@
+{% load static tailwind_tags %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Books</title>
+    {%  tailwind_css %}
+</head>
+<body class="bg-gradient-to-r from-teal-700  to-emerald-700">
+    <nav class="flex justify-between px-4 py-8 mx-auto bg-gradient-to-bl from-transparent to-emerald-900 text-indigo-50 text-2xl">
+        <div class="antialiased hover:subpixel-antialiased text-4xl font-semibold">List of Available Books</div>
+        {% if data %}
+            <div>
+                <a href="{% url 'account' %}">Account</a>
+                <a href="{% url 'logout' %}">Sign Out</a>
+            </div>
+        {% else %}
+            <div class="font-semibold">
+                <a href="{% url 'login' %}">Sign In /</a>
+                <a href="{% url 'register' %}">Sign Up</a>
+            </div>
+        {% endif %}
+    </nav>
+    {% for book in books %}
+    <div class="container flex flex-col mx-auto w-full items-center px-4 py-5 sm:px-6  dark:bg-gray-800 shadow mb-2  transition duration-500 ease-in-out transform hover:-translate-y-1 hover:shadow-lg select-none cursor-pointer bg-lime-600 rounded-md text-xl my-5 justify-center border-none outline-dotted outline-gray outline-lime-500">
+            <a href="{{book.get_absolute_url}}" class=" my-2 mx-4 italic list-disc text-amber-50 flex flex-col p-2" >
+                <strong>{{ book.title }}</strong></a> by {{ book.author }} <br>
+        {% endfor %}
+    </div>
+</body>
+</html>

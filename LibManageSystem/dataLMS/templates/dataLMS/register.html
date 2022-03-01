@@ -1,0 +1,36 @@
+{% load static tailwind_tags %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    {%  tailwind_css %}
+</head>
+<body class="bg-gradient-to-l from-zinc-800 to-slate-800 bg-opacity-50" >
+    <div class=" mx-auto backdrop-filter backdrop-blur-lg bg-opacity-10 font-semibold items-center italic text-4xl text-pink-50 shadow-lg rounded-md p-2 m-auto">
+        <h1 class="text-center ">REGISTER</h1>
+    </div>
+<div class="flex flex-col items-center justify-center w-screen h-screen">
+
+    <div class="flex flex-col  backdrop-filter hover:backdrop-blur-lg bg-opacity-10  outline-indigo-50 outline-dashed border-transparent bg-white rounded-md shadow-2xl p-20 mt-16">
+        
+        <form action="{% url 'register' %}" method="POST">
+            <div class="align-text-top text-2xl m-4 text-stone-200">
+                <h1 class="text-center font-bold ">REGISTER</h1>
+            </div>
+            {% csrf_token %}
+            {% for items in form %}
+            <h1 class="text-neutral-200 rounded-md ">{{ items.label }}</h1>
+            <div class="drop-shadow-2xl ">{{ items }}</div>
+            <br>
+            {% endfor %}
+            <input type="submit" value="Create Account" class="p-2  text-white rounded-lg shadow-xl 
+           hover:text-white mx-10 cursor-pointer transition ease-in-out delay-15 bg-gradient-to-tr hover:translate-y-1 hover:scale-110 hover:bg-gradient-to-bl from- from-blue-800 to-blue-700 duration-300 ">
+        </form>
+        {{ error }}
+    </div>
+</div>
+</body>
+</html>
